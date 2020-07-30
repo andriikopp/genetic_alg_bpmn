@@ -9,10 +9,11 @@ let min = Math.min(a, b) - Math.max(a, b)
 let max = Math.max(a, b) - Math.min(a, b)
 
 let rand = function(min, max) {
-	return Math.floor(Math.random() * (max - min + 1)) + min;
+	return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
-let num = 4
+let num = 6
+let eps = 10e-6
 
 // initialization
 let chromosomes = []
@@ -27,57 +28,31 @@ while (solutions.length == 0) {
 	// evaluation
 	let objectives = []
 
-	for (let i = 0; i < num; i++) {
-		let x = chromosomes[i][0]
-		let y = chromosomes[i][1]
+	chromosomes.forEach(x => objectives.push(obj(x[0], x[1])))
 
-		objectives[i] = obj(x, y)
-	}
+	// stop ?
+	objectives.forEach((x, i) => {
+		if (x <= eps) {
+			solutions.push([x, chromosomes[i]])
+		}
+	})
 
 	// selection
 	let fitness = []
 
-	for (let i = 0; i < num; i++) {
-		fitness[i] = {
-			obj: objectives[i],
-			val: 1 / (1 + objectives[i]),
-			chr: chromosomes[i]
-		}
-	}
+	chromosomes.forEach((x, i) => fitness.push({ obj: objectives[i], chr: x }))
 
-	fitness.sort(function(a, b) {
-		return a.val - b.val
-	})
+	fitness.sort((a, b) => a.obj - b.obj)
 
 	// crossover
-	chromosomes[0] = [fitness[2].chr[0], fitness[3].chr[1]]
-	chromosomes[1] = [fitness[2].chr[1], fitness[3].chr[0]]
+	chromosomes[num - 1] = [fitness[0].chr[0], fitness[1].chr[1]]
+	chromosomes[num - 2] = [fitness[0].chr[1], fitness[1].chr[0]]
 
 	// mutation
 	let mut = rand(0, num - 1)
 	let inv = rand(0, 1)
 
 	chromosomes[mut][inv] = rand(min, max)
-
-	for (let i = 0; i < num; i++) {
-		let x = chromosomes[i][0]
-		let y = chromosomes[i][1]
-
-		objectives[i] = obj(x, y)
-
-		fitness[i] = {
-			obj: objectives[i],
-			val: 1 / (1 + objectives[i]),
-			chr: chromosomes[i]
-		}
-	}
-
-	// end
-	for (let i = 0; i < num; i++) {
-		if (Math.abs(fitness[i].val - 1) <= 10E-6) {
-			solutions.push(fitness[i])
-		}
-	}
 }
 
 console.log(solutions)
