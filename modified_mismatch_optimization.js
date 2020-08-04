@@ -5,11 +5,11 @@ let splits = 1
 let joins = 2
 
 let W = function(x) {
-	return Math.abs((splitFlows + x[0] + 1) / (splits + x[1] + 1) - (joinFlows + x[2] + 1) / (joins + x[3] + 1)
+	return Math.abs((splitFlows + x[0] + 1) / (splits + x[1] + 1) - (joinFlows + x[2] + 1) / (joins + x[3] + 1))
 
 	// constraints
-	+ ((splitFlows + x[0]) / (splits + x[1]) - 3)
-	+ ((joinFlows + x[2]) / (joins + x[3]) - 3))
+	+ Math.abs((splitFlows + x[0]) / 3 - (splits + x[1]))
+	+ Math.abs((joinFlows + x[2]) / 3 - (joins + x[3]))
 }
 
 let minFlows = Math.min(splitFlows, joinFlows) - Math.max(splitFlows, joinFlows)
